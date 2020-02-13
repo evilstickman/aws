@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'thundra_test
+
+  Sample SAM Template for thundra_test
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  ThundraTestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ThundraTestFunction
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        ThundraTest:
+          Type: Api
+          Properties:
+            Path: /thundra
+            Method: get
+Outputs:
+  ThundraTestApi:
+    Description: API Gateway endpoint URL for Prod stage for Thundra Test function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/thundra/
+  ThundraTestFunction:
+    Description: Thundra Test Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - ThundraTestFunction
+      - Arn
+  ThundraTestFunctionIamRole:
+    Description: Implicit IAM Role created for Thundra Test function
+    Value:
+      Fn::GetAtt:
+      - ThundraTestFunctionRole
+      - Arn
