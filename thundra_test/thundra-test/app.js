@@ -31,3 +31,25 @@ exports.lambdaHandler = async (event, context) => {
 
     return response
 };
+
+exports.chaoticLambdaHandler = async (event, context) => {
+    try {
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify({
+                message: 'hello world'
+            })
+        }
+        // Larry strikes!
+        await sleep(1000);
+        body = JSON.parse(response.body);
+        body.larry_status = "Meets with Larry's Approval";
+        response.body = JSON.stringify(body);
+        
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+
+    return response
+};

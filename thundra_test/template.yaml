@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  thundra_test
+  Exploring Chaos Engineering
 
-  Sample SAM Template for thundra_test
+  AWS SAM project for exploring Latency Monkeys
   
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -23,6 +23,18 @@ Resources:
           Properties:
             Path: /thundra
             Method: get
+  ChaoticThundraTestFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: thundra-test/
+      Handler: app.chaoticLambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        ThundraTest:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /thundra-chaotic
+            Method: get
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -37,3 +49,9 @@ Outputs:
   ThundraTestFunctionIamRole:
     Description: "Implicit IAM Role created for Thundra Test function"
     Value: !GetAtt ThundraTestFunctionRole.Arn
+  ChaoticThundraTestFunction:
+    Description: "Larry Presents the Thundra Test Lambda Function ARN"
+    Value: !GetAtt ChaoticThundraTestFunction.Arn
+  ChaoticThundraTestFunctionIamRole:
+    Description: "Implicit IAM Role created for Larry's Thundra Test function"
+    Value: !GetAtt ChaoticThundraTestFunctionRole.Arn
