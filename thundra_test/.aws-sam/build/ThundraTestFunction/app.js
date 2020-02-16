@@ -1,33 +1,50 @@
-// const axios = require('axios')
-// const url = 'http://checkip.amazonaws.com/';
 let response;
 
+/*
+ * Builds a basic response to be sent back to the caller
+ */
+buildResponse = () => {
+    response = {
+            'statusCode': 200,
+            'body': JSON.stringify({
+                message: 'Normal operation succeeded!'
+            })
+        };
+    return response;
+};
+
 /**
- *
- * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
- * @param {Object} event - API Gateway Lambda Proxy Input Format
- *
- * Context doc: https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html 
- * @param {Object} context
- *
- * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns {Object} object - API Gateway Lambda Proxy Output Format
- * 
+ * Basic function to return a standard response without chaos
  */
 exports.lambdaHandler = async (event, context) => {
     try {
-        // const ret = await axios(url);
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: 'hello world',
-                // location: ret.data.trim()
-            })
-        }
+        response = buildResponse();
     } catch (err) {
         console.log(err);
         return err;
     }
 
-    return response
+    return response;
+};
+  
+function sleep(ms) {
+return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+});
+}   
+
+exports.chaoticLambdaHandler = async (event, context) => {
+    try {
+        // Larry strikes!
+        await sleep(1000);
+        response = buildResponse();
+        response.body.larry = "Meets with Larry's Approval";
+        console.log( "Meets with Larry's Approval" );
+        
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+
+    return response;
 };

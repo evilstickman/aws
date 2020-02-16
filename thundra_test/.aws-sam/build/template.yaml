@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'thundra_test
+Description: 'Exploring Chaos Engineering
 
-  Sample SAM Template for thundra_test
+  AWS SAM project for exploring Latency Monkeys
 
   '
 Globals:
@@ -21,6 +21,18 @@ Resources:
           Properties:
             Path: /thundra
             Method: get
+  ChaoticThundraTestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ChaoticThundraTestFunction
+      Handler: app.chaoticLambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        ThundraTest:
+          Type: Api
+          Properties:
+            Path: /thundra-chaotic
+            Method: get
 Outputs:
   ThundraTestApi:
     Description: API Gateway endpoint URL for Prod stage for Thundra Test function
@@ -37,4 +49,16 @@ Outputs:
     Value:
       Fn::GetAtt:
       - ThundraTestFunctionRole
+      - Arn
+  ChaoticThundraTestFunction:
+    Description: Larry Presents the Thundra Test Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - ChaoticThundraTestFunction
+      - Arn
+  ChaoticThundraTestFunctionIamRole:
+    Description: Implicit IAM Role created for Larry's Thundra Test function
+    Value:
+      Fn::GetAtt:
+      - ChaoticThundraTestFunctionRole
       - Arn
