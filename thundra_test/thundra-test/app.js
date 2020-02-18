@@ -28,9 +28,9 @@ exports.lambdaHandler = async (event, context) => {
 };
   
 function sleep(ms) {
-return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-});
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
 }   
 
 exports.chaoticLambdaHandler = async (event, context) => {
