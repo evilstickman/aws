@@ -4,11 +4,25 @@ Description: >
   Exploring Chaos Engineering
 
   AWS SAM project for exploring Latency Monkeys
-  
+
+Parameters:
+  ThundraAWSAccountNo:
+    Type: Number
+    Default: 269863060030
+  ThundraNodeLayerVersion:
+    Type: Number
+    Default: 24 # Or use any other version
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
-  Function:
-    Timeout: 3
+  Function:    
+    Runtime: provided
+    Timeout: 5
+    Environment:
+      Variables:
+          thundra_apiKey: API-KEY
+    Layers:
+      - !Sub arn:aws:lambda:${AWS::Region}:${ThundraAWSAccountNo}:layer:thundra-lambda-node-layer:${ThundraNodeLayerVersion}
+
 
 Resources:
   ThundraTestFunction:
@@ -34,6 +48,18 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /thundra-chaotic
+            Method: get
+  ThundraSpanListenerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: thundra-test/
+      Handler: app.spanListenerLambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        ThundraTest:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /thundra-span
             Method: get
 
 Outputs:

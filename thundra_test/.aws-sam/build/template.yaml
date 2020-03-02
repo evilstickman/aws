@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Exploring Chaos Engineering
+
+  AWS SAM project for exploring Latency Monkeys
+
+  '
+Parameters:
+  ThundraAWSAccountNo:
+    Type: Number
+    Default: 269863060030
+  ThundraNodeLayerVersion:
+    Type: Number
+    Default: 24
+Globals:
+  Function:
+    Runtime: provided
+    Timeout: 5
+    Environment:
+      Variables:
+        thundra_apiKey: f974ff83-1f8e-4bcc-9244-b8498e713176
+    Layers:
+    - Fn::Sub: arn:aws:lambda:${AWS::Region}:${ThundraAWSAccountNo}:layer:thundra-lambda-node-layer:${ThundraNodeLayerVersion}
+Resources:
+  ThundraTestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ThundraTestFunction
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        ThundraTest:
+          Type: Api
+          Properties:
+            Path: /thundra
+            Method: get
+  ChaoticThundraTestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ChaoticThundraTestFunction
+      Handler: app.chaoticLambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        ThundraTest:
+          Type: Api
+          Properties:
+            Path: /thundra-chaotic
+            Method: get
+  ThundraSpanListenerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ThundraSpanListenerFunction
+      Handler: app.spanListenerLambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        ThundraTest:
+          Type: Api
+          Properties:
+            Path: /thundra-span
+            Method: get
+Outputs:
+  ThundraTestApi:
+    Description: API Gateway endpoint URL for Prod stage for Thundra Test function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/thundra/
+  ThundraTestFunction:
+    Description: Thundra Test Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - ThundraTestFunction
+      - Arn
+  ThundraTestFunctionIamRole:
+    Description: Implicit IAM Role created for Thundra Test function
+    Value:
+      Fn::GetAtt:
+      - ThundraTestFunctionRole
+      - Arn
+  ChaoticThundraTestFunction:
+    Description: Larry Presents the Thundra Test Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - ChaoticThundraTestFunction
+      - Arn
+  ChaoticThundraTestFunctionIamRole:
+    Description: Implicit IAM Role created for Larry's Thundra Test function
+    Value:
+      Fn::GetAtt:
+      - ChaoticThundraTestFunctionRole
+      - Arn
