@@ -8,7 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "@thundra/core": "^2.9.2",
-    "axios": "^0.18.0"
+    "axios": "^0.21.1"
   },
   "scripts": {
     "test": "mocha tests/unit/"
